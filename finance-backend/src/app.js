@@ -3,8 +3,12 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
-const errorHandler = require('./middleware/error.middleware');
-const apiLimiter = require('./middleware/rateLimit.middleware');
+const swaggerUi = require('swagger-ui-express');
+const yaml = require('yamljs');
+const path = require('path');
+
+// Swagger setup
+const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yaml'));
 
 // Route imports
 const authRoutes = require('./routes/auth.routes');
@@ -23,8 +27,8 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Rate limiting
-app.use('/api', apiLimiter);
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
