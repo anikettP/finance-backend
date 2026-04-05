@@ -7,6 +7,9 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('yamljs');
 const path = require('path');
 
+const errorHandler = require('./middleware/error.middleware');
+const apiLimiter = require('./middleware/rateLimit.middleware');
+
 // Swagger setup
 const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yaml'));
 
@@ -29,6 +32,9 @@ app.use(morgan('dev'));
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Rate limiting
+app.use('/api', apiLimiter);
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
